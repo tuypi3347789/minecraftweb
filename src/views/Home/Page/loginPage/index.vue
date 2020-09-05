@@ -76,6 +76,15 @@
               </div>
             </div>
             <div class="row justify-content-center" style="line-height: 5vmin">
+              <label class="col-2 text-right">UUID:</label>
+              <div class="col-3">
+                <input type="text" placeholder="請查詢" class="form-control h-100" v-model="group.uuid" />
+              </div>
+              <div class="col-1">
+                <a :href="'https://namemc.com/profile/' + group.playerName" target="_blank">查詢</a>
+              </div>
+            </div>
+            <div class="row justify-content-center" style="line-height: 5vmin">
               <label class="col-2 text-right">帳號:</label>
               <div class="col-4">
                 <input type="text" placeholder="最少需6個英數" @change="length(group.playerAccount)"
@@ -137,6 +146,7 @@ export default {
       group: {
         playerAccount: '',
         playerPassword: '',
+        uuid: '',
         playerEmail: '',
         playerName: '',
       },
