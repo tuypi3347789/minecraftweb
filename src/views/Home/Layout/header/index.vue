@@ -8,8 +8,8 @@
         TAB
       </div>
       <div class="col-3 text-right">
-        <router-link to="login" class="text-white">登入/註冊</router-link> |
-        <router-link to="" class="text-white">登出</router-link>
+        <router-link :to="login.path" class="text-white">{{login.name}}</router-link> |
+        <a class="text-white" href="#" @click="logout">登出</a>
       </div>
     </div>
   </div>
@@ -23,11 +23,32 @@ export default {
   },
   data() {
     return {
+      login: {
+        path: '',
+        name: '',
+      },
     };
   },
   methods: {
+    loginOrAc() {
+      if (this.$store.state.login.token && this.$store.state.login.name
+        && localStorage.getItem('token') && localStorage.getItem('name')) {
+        console.log(123);
+        this.login.path = 'myinformation';
+        this.login.name = this.$store.state.login.name;
+      } else {
+        this.login.path = 'login';
+        this.login.name = '登入/註冊';
+      }
+    },
+    logout() {
+      localStorage.clear();
+      this.$router.go(0);
+      alert('登出中。。。。');
+    },
   },
   mounted() {
+    this.loginOrAc();
   },
 };
 </script>

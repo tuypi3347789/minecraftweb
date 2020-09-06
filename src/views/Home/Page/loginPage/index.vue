@@ -27,13 +27,17 @@
             <div class="row justify-content-center" style="line-height: 5vmin">
               <label class="col-2 text-right">帳號:</label>
               <div class="col-4">
-                <input type="text" class="form-control h-100" />
+                <input type="text" class="form-control h-100"
+                  @change="length(loginGroup.playerAccount)"
+                  v-model="loginGroup.playerAccount" />
               </div>
             </div>
             <div class="row justify-content-center" style="line-height: 5vmin">
               <label class="col-2 text-right">密碼:</label>
               <div class="col-4">
-                <input type="text" class="form-control h-100" />
+                <input type="password" class="form-control h-100"
+                  @change="length(loginGroup.playerPassword)"
+                  v-model="loginGroup.playerPassword"/>
               </div>
             </div>
             <div class="row justify-content-center" style="line-height: 5vmin">
@@ -44,7 +48,7 @@
             </div>
             <div class="row justify-content-center" style="line-height: 7vmin">
               <div class="col-7">
-                <button @click="register()" class="w-100 btn bg-dark text-white h-100">
+                <button @click="login()" class="w-100 btn bg-dark text-white h-100">
                   <span>登入</span>
                 </button>
               </div>
@@ -152,12 +156,10 @@ export default {
       },
       password: '',
       value: '',
-      test: [
-        {
-          uuid: '1-2-3-4',
-          name: 'test',
-        }
-      ]
+      loginGroup: {
+        playerAccount: 'test123',
+        playerPassword: 'test123',
+      },
     };
   },
   methods: {
@@ -204,6 +206,38 @@ export default {
         } else {
           alert('欄位不得為空');
         }
+    },
+    login() {
+      if (this.loginGroup.playerAccount !== '' && this.loginGroup.playerPassword !== '') {
+        if (this.length(this.loginGroup.playerAccount) && this.length(this.loginGroup.playerPassword)) {
+          axios({
+            method: 'post',
+            baseURL: 'https://localhost:5001',
+            url: '/api/Player/login',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            data: this.loginGroup,
+          })
+          .then((result) => {
+            if (result.data === 0) {
+              alert('登入失敗，請檢查帳號或密碼');
+            } else {
+              console.log(result.data[0]);
+              localStorage.setItem('token', result.data[0].playerAccount);
+              localStorage.setItem('name', result.data[0].playerName);
+              this.$store.commit('loginFun', result.data[0]);
+              this.timeout = setTimeout(() => {
+                this.$router.push('homePage');
+              }, 2000);
+              alert('登入成功，導入主頁中');
+            }
+          })
+          .catch((err) => { console.error(err) });
+        }
+      } else {
+        alert('欄位不得為空!!!');
+      }
     },
     emaillChange(value) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
